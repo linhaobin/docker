@@ -2,19 +2,17 @@ FROM jenkins/jenkins
 
 USER root
 
-RUN apt-get update && \
-    apt-get install -y sudo && \
-    rm -rf /var/lib/apt/list/*
-
-RUN curl -fsSL get.docker.com -o get-docker.sh && \
-    sudo sh get-docker.sh && \
-    rm -rf /var/lib/apt/list/*
-
-ARG dockerGid=999
-
-RUN echo "docker:x:${dockerGid}:jenkins" >> /etc/group
-
-RUN sudo curl -L https://github.com/docker/compose/releases/download/1.21.2/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose && \
-    sudo chmod +x /usr/local/bin/docker-compose
+# Install Docker from official repo
+RUN apt-get update -qq && \
+    apt-get install -qqy apt-transport-https ca-certificates curl gnupg2 software-properties-common && \
+    curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add - && \
+    apt-key fingerprint 0EBFCD88 && \
+    add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/debian $(lsb_release -cs) stable" && \
+    apt-get update -qq && \
+    apt-get install -qqy docker-ce && \
+    curl -L https://github.com/docker/compose/releases/download/1.21.2/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose && \
+    chmod +x /usr/local/bin/docker-compose && \
+    usermod -aG docker jenkins && \
+    chown -R jenkins:jenkins $JENKINS_HOME/
 
 USER jenkins
