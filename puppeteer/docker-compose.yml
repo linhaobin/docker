@@ -1,0 +1,9 @@
+version: "3.6"
+
+services:
+
+  shadowsocks:
+    image: linhaobin/puppeteer
+    build: 
+      context: ./
+      dockerfile: Dockerfile
