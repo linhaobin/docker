@@ -1,0 +1,22 @@
+version: "3.5"
+services:
+
+  register-runner:
+    restart: 'no'
+    image: gitlab/gitlab-runner:latest
+    volumes:
+      - "./config:/etc/gitlab-runner"
+    command:
+      - register
+      - --non-interactive
+      - --executor
+      - "docker"
+      - --description
+      - "docker-runner"
+      - --docker-image
+      - "docker:stable"
+      - --docker-volumes
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    environment:
+      - CI_SERVER_URL=https://gitlab.com/
+      - REGISTRATION_TOKEN=xxxxx
